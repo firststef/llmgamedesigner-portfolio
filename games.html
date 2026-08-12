@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Games · firststef</title>
+<meta name="description" content="Games by firststef: PowerEngine, Streamer UNTIL, Chess Worlds, ChessWorlds: Grandmaker, Realm Code, Spel Ignite and The Untitled Story.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .game{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:center;margin:0 0 52px;}
+  .game:last-child{margin-bottom:0;}
+  .game .info h2{font-size:1.6rem;color:var(--ink);margin-bottom:6px;}
+  .game .info .when{font-family:var(--mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 14px;}
+  .game .info p{color:var(--muted);font-size:1.02rem;margin:0;}
+  .game iframe{width:100%;height:167px;border:0;border-radius:6px;background:var(--bg-2);box-shadow:var(--shadow);}
+  @media(max-width:840px){.game{grid-template-columns:1fr;gap:18px;}.game .embed{order:2;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html"><b>first</b>stef</a>
+    <nav class="nav">
+      <a href="index.html#power-engine">Power Engine</a>
+      <a href="index.html#genai-ge">GenAI-GE</a>
+      <a href="index.html#until">Streamer UNTIL</a>
+      <a href="games.html">Games</a>
+      <a href="index.html">All work</a>
+    </nav>
+  </div>
+</div>
+
+<header class="case-hero wrap">
+  <span class="kicker">Games</span>
+  <h1>The games I have made.</h1>
+  <p class="lede">Shipped jams, prototypes, and the two engines the rest of this site is about. Most of them exist because I wanted to see whether a system would hold up once somebody actually played it.</p>
+</header>
+
+<section>
+  <div class="wrap">
+
+    <article class="game">
+      <div class="info">
+        <h2>PowerEngine</h2>
+        <p class="when">Godot · 2026 to present · in development</p>
+        <p>A 3D turn-based fighter where each character is a program and a judge model rewrites it mid fight in response to what the fighter says out loud. Simultaneous action selection with prediction ghosts underneath, and a world whose rules ship as prose rather than engine code, so the same sentence can be refused in one universe and rewarded in another.</p>
+      </div>
+      <div class="embed">
+        <iframe title="PowerEngine on itch.io" src="https://itch.io/embed/4531220?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://firststef.itch.io/powerengine">PowerEngine by firststef</a></iframe>
+      </div>
+    </article>
+
+    <article class="game">
+      <div class="info">
+        <h2>Streamer UNTIL</h2>
+        <p class="when">Unity · March 2026 · game jam</p>
+        <p>A first person horror game where you livestream from an abandoned building and a simulated audience decides whether you live. On a four person team I built the crowd simulation, the node based authoring tool it runs on, and the 289 lines that go through it. One number is both the health bar and the monster's difficulty setting.</p>
+      </div>
+      <div class="embed">
+        <iframe title="Streamer UNTIL on itch.io" src="https://itch.io/embed/4516621?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://joostvb.itch.io/streamer-until">Streamer UNTIL</a></iframe>
+      </div>
+    </article>
+
+    <article class="game">
+      <div class="info">
+        <h2>Chess Worlds</h2>
+        <p class="when">Godot · February 2026 to present</p>
+        <p>A tactics game where chess pieces come to life and fight across a living world. You play a lone human king travelling four realms to gather allies. Each of the five factions plays by its own philosophy rather than its own stat line: elves foresee, dwarves endure, mermaids reshape the board, constructs run on programmable logic.</p>
+      </div>
+      <div class="embed">
+        <iframe title="Chess Worlds on itch.io" src="https://itch.io/embed/4651222?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://firststef.itch.io/chessworlds">Chess Worlds by firststef</a></iframe>
+      </div>
+    </article>
+
+    <article class="game">
+      <div class="info">
+        <h2>ChessWorlds: Grandmaker</h2>
+        <p class="when">Godot · July 2026 · prototype</p>
+        <p>A chess variant where you balance two armies and design your own pieces out of code blocks, then send them into battle. It grew out of Chess Worlds and turns piece design itself into the game.</p>
+      </div>
+      <div class="embed">
+        <iframe title="ChessWorlds: Grandmaker on itch.io" src="https://itch.io/embed/4817949?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://firststef.itch.io/chessworlds-grandmaker">ChessWorlds: Grandmaker by firststef</a></iframe>
+      </div>
+    </article>
+
+    <article class="game">
+      <div class="info">
+        <h2>Realm Code</h2>
+        <p class="when">PlayCanvas · January 2026 · seven day jam</p>
+        <p>A short game where magic is written as code. A parasite living in the code has corrupted your garden, and you heal it by finding books, completing the code, and writing your own inside it. Built from scratch for a jam on the theme "glitch in the system", which is also where I learned PlayCanvas.</p>
+      </div>
+      <div class="embed">
+        <iframe title="Realm Code on itch.io" src="https://itch.io/embed/4230967?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://firststef.itch.io/realm-code">Realm Code by firststef</a></iframe>
+      </div>
+    </article>
+
+    <article class="game">
+      <div class="info">
+        <h2>Spel Ignite</h2>
+        <p class="when">Unity · 2021 · prototype</p>
+        <p>A visual-programming game built on SPEL, an esoteric language I made in college. You write real logic to cast spells in a small world I wanted to fill with mystery and characters. It is a prototype, and the first piece of a larger idea.</p>
+      </div>
+      <div class="embed">
+        <iframe title="Spel Ignite on itch.io" src="https://itch.io/embed/2200891?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://firststef.itch.io/spel-ignite">Spel Ignite by firststef</a></iframe>
+      </div>
+    </article>
+
+    <article class="game">
+      <div class="info">
+        <h2>The Untitled Story: the video game</h2>
+        <p class="when">RPG Maker · 2018 · about six months</p>
+        <p>A fan game I built on my own from Kevin Do's concept art. I pieced together the story, wrote all the dialogue and the scenes, and mixed role-playing with fighting-game combat for stickman characters. Now discontinued, but the writing was all mine.</p>
+      </div>
+      <div class="embed">
+        <iframe title="The Untitled Story on itch.io" src="https://itch.io/embed/2208711?linkback=true&amp;bg_color=161c20&amp;fg_color=e8eef1&amp;link_color=2fb59b&amp;border_color=1e262b"><a href="https://firststef.itch.io/tus-vg">The Untitled Story by firststef</a></iframe>
+      </div>
+    </article>
+
+    <div class="cta" style="margin-top:40px;">
+      <a class="btn" href="https://firststef.itch.io/" target="_blank" rel="noopener">Open my full itch.io page</a>
+      <a class="link" href="index.html#power-engine">See the Power Engine case study</a>
+    </div>
+
+  </div>
+</section>
+
+<footer class="wrap">
+  firststef, game designer and gameplay programmer.
+</footer>
+
+<script src="assets/lightbox.js"></script>
+</body>
+</html>

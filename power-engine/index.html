@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Power Engine — a judge model inside a fighting game — firststef</title>
+<title>Power Engine, a judge model inside a fighting game · firststef</title>
 <meta name="description" content="Power Engine: a 3D turn-based fighter in Godot where each character is a program and a judge model rewrites it mid fight in response to what the fighter says out loud.">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/style.css">
@@ -19,6 +19,7 @@
       <a href="#surface">What a patch changes</a>
       <a href="#rules">Rules as data</a>
       <a href="#proof">How I check it</a>
+      <a href="../games.html">Games</a>
       <a href="../index.html">All work</a>
     </nav>
   </div>
@@ -93,7 +94,7 @@
         <div class="n">3</div>
         <div>
           <h4>The judge decides what it costs and what it grants</h4>
-          <p>Only on a yes. It reads the speaker's whole program, the opponent's program and live state, the scenario's written world rules, the buffer, and the last twenty things that happened in the fight. It can still answer that nothing happened, and that answer is logged. Measured at roughly four seconds.</p>
+          <p>This stage runs only on a yes. It reads the speaker's whole program, the opponent's program and live state, the scenario's written world rules, the buffer, and the last twenty things that happened in the fight. It can still answer that nothing happened, and the engine logs that answer too. Measured at roughly four seconds.</p>
           <div class="who">Larger model</div>
         </div>
       </div>
@@ -226,7 +227,7 @@
 
 <section id="limits">
   <div class="wrap">
-    <div class="section-head"><span class="num">08</span><h2>What is not built</h2></div>
+    <div class="section-head"><span class="num">08</span><h2>Open problems</h2></div>
     <div class="grid cols-2">
       <article class="panel limit">
         <div class="tag">Not implemented</div>
@@ -245,15 +246,15 @@
       </article>
       <article class="panel limit">
         <div class="tag">Presentation</div>
-        <h3>What the screenshots do not show</h3>
-        <p>The reason a sealed button gives is supplied by the engine and attached as a tooltip, but the UI does not draw tooltips on disabled buttons, so it is shown in a data panel instead. The speech bubble renders oversized at close camera distances. Fighters are the project's primitive rigs; per-character art is not done.</p>
+        <h3>Notes on the screenshots</h3>
+        <p>The reason a sealed button gives is supplied by the engine and attached as a tooltip, but the UI does not draw tooltips on disabled buttons, so it appears in a data panel instead. The speech bubble renders oversized at close camera distances. Fighters use the project's primitive rigs, and per-character art is still to come.</p>
       </article>
     </div>
     <div class="prose" style="margin-top:34px;">
       <p>Everything on this page comes from recorded matches: the client talking to the model server, with nothing reconstructed and nothing mocked up. Balance is the honest open question. Magnitudes now scale with how much narrative weight the scenario text gives a moment, and one severe covenant in testing bought a seventy percent damage increase. Whether that is thrilling or broken is a question for playtests, not for me.</p>
       <div class="cta" style="margin-top:26px;">
-        <a class="btn" href="../genai-ge/index.html">The other project</a>
-        <a class="link" href="../index.html">Back to all work</a>
+        <a class="btn" href="../index.html">Other projects</a>
+        <a class="link" href="../genai-ge/index.html">GenAI-GE</a>
       </div>
     </div>
   </div>
@@ -263,5 +264,6 @@
   firststef, game designer and gameplay programmer.
 </footer>
 
+<script src="../assets/lightbox.js"></script>
 </body>
 </html>

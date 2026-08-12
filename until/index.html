@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Streamer UNTIL, a simulated audience as the antagonist · firststef</title>
+<meta name="description" content="Streamer UNTIL: a simulated crowd whose attention is the player's health bar and the monster's difficulty setting, authored in a node based tool built for the team.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>first</b>stef</a>
+    <nav class="nav">
+      <a href="#loop">The loop</a>
+      <a href="#sim">The crowd</a>
+      <a href="#tool">The tool</a>
+      <a href="#nomodel">Why it is authored</a>
+      <a href="../games.html">Games</a>
+      <a href="../index.html">All work</a>
+    </nav>
+  </div>
+</div>
+
+<header class="case-hero wrap">
+  <span class="kicker">Case study</span>
+  <h1>Streamer UNTIL</h1>
+  <p class="lede">A first person horror game where you livestream from an abandoned building and a simulated audience watches. The crowd is not set dressing. Its attention is your health bar, and it is also the difficulty setting on the thing hunting you.</p>
+  <p class="team">Four person game jam team, Unity, March 2026. I owned the system end to end: the simulation, the authoring tool it runs on, and the 289 lines that run through it. The hide volumes and the entity AI are a teammate's work.</p>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="prose">
+      <p class="lead-q">Attention is the only resource in the game, and both staying alive and getting killed are paid for out of it.</p>
+      <p>The jam theme was social media. Putting a live chat on screen at all times is a bad idea for horror, which usually runs on isolation, so the only way it works is if the chat is the threat rather than the company.</p>
+      <p>That gave the game one number to build everything on. Viewership is health: at zero the stream ends and the run is over. Viewership is also the monster's awareness, so the bigger the crowd, the harder it hunts. You raise it by doing what the crowd dares you to do, and the same noise that keeps you alive is what gets you found.</p>
+      <p><strong>Once one number does both jobs, every line the crowd says has a price.</strong> Writing a reaction stops being flavour and becomes a tuning decision: how many viewers this moment wins or loses, and how much danger that buys.</p>
+    </div>
+  </div>
+</section>
+
+<section id="loop">
+  <div class="wrap">
+    <div class="section-head"><span class="num">01</span><h2>What a moment costs</h2></div>
+    <div class="steps" style="max-width:66ch;">
+      <div class="step">
+        <div class="n">1</div>
+        <div>
+          <h4>The world publishes an event</h4>
+          <p>The player looks at something, stands still too long, or crosses a volume. Triggers do not call the chat directly. They publish onto a shared event bus, so the level and the audience stay decoupled and a designer can rewire either one alone.</p>
+          <div class="who">Event bus</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <div>
+          <h4>The matching branch of the graph runs</h4>
+          <p>A trigger opens a dare, a message pool, a timer or a flood, depending on how the graph was authored for that zone.</p>
+          <div class="who">Chat graph</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <div>
+          <h4>The simulation picks who would say it</h4>
+          <p>Viewers carry five traits, so a jump scare tends to come from the fearful ones and a dare from the trollish and the brave. The line is chosen from the pool by the personality that fits it.</p>
+          <div class="who">Viewer simulation</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <div>
+          <h4>The line is priced and rendered</h4>
+          <p>It is parsed for emoji and mentions, dropped into the feed, and its viewership effect is layered onto the meter.</p>
+          <div class="who">Chat manager</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">5</div>
+        <div>
+          <h4>The meter changes how the game hunts you</h4>
+          <p>Zero ends the run. On the way there the number is feeding the monster's awareness, so the crowd you built is what makes the danger real.</p>
+          <div class="who">Back to the world</div>
+        </div>
+      </div>
+    </div>
+    <div class="prose" style="margin-top:30px;">
+      <p>The signal model is the same idea pushed one step further. Signal strength is a running cost rather than a readout on the phone: no signal drains five viewers a tick, low drains two, medium one, and full signal has no drain wired to it at all. That is what makes walking into a dead zone to restore power worth doing, and it is why silence in this game is expensive rather than restful.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sim">
+  <div class="wrap">
+    <div class="section-head"><span class="num">02</span><h2>A crowd made of traits</h2></div>
+    <div class="prose">
+      <p>The audience is a population, not a queue of strings. Each simulated viewer carries five traits, and the traits decide who is plausible for a given kind of line. That is the whole trick, and it is a small amount of code, but it does the thing a random shuffle cannot: the chat develops a temperament you can read.</p>
+      <p>It matters because the player has to learn to predict the crowd in order to survive it. If lines came out at random, the dares would feel arbitrary and the punishment for ignoring them would feel unfair. Because a personality is behind each one, a bored crowd sounds bored, a panicking crowd sounds panicked, and the player can tell which one they are dealing with before the meter tells them.</p>
+      <p>The constraint that shaped the writing more than anything else is that <strong>the audience can only perceive what the camera and microphone pick up</strong>. An early draft had the chat reacting to the monster while the player was hidden in a cupboard, which was impossible, since the camera was pointed at a cupboard door. Cutting those lines turned the hiding section from a horror scene into a boredom scene, and that is what made it work.</p>
+    </div>
+    <a class="doc-figure" href="../assets/img/until/until-barks-teaser.png" target="_blank" rel="noopener">
+      <img src="../assets/img/until/until-barks-teaser.png" alt="First page of the bark sheet, showing trigger, context, intent, viewership effect and line">
+      <figcaption>Page one of the bark sheet. Every line carries its trigger, the gameplay context, the intent, the viewership effect, and the text. 289 of them.</figcaption>
+    </a>
+  </div>
+</section>
+
+<section id="tool">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>The tool the team authored it in</h2></div>
+    <div class="prose">
+      <p>I did not hand code the reactions. On a four person team with one programmer on the audience, hand coding it would have made me the bottleneck for every writing change until the deadline.</p>
+      <p>So I built a node based chat graph editor in Unity on top of the open source xNode, with fifteen authorable node types: triggers, message pools, timed dares, viewer count effects, counters, cooldowns, flags and conditions, and floods. Graphs and nodes are ScriptableObject assets, which is the part that mattered in practice. A quest is a file. Someone who does not program can open it, follow a trigger through its conditions, rewrite what the crowd says, and save, without touching code or waiting on me.</p>
+      <p>Both screenshots below are the shipped project rather than diagrams drawn for a portfolio.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/until/chatgraph-overview.png" alt="The whole chat graph, organised into framed zones">
+        <figcaption>The whole graph. Each frame is a zone of the game: the theatre foyer, the theatre hall, the chase, the bunker.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/img/until/chatgraph-detail.png" alt="One zone of the chat graph up close">
+        <figcaption>One zone up close. A trigger runs a dare, message pools speak the reactions, and viewer count nodes price each beat.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="nomodel">
+  <div class="wrap">
+    <div class="section-head"><span class="num">04</span><h2>Why the crowd is authored</h2></div>
+    <div class="prose">
+      <p>An improvising crowd is the obvious thing to reach for here, and I deliberately hand authored it instead. The reasoning is the same one that shaped both of the other projects on this site.</p>
+      <p>Every line in this game carries a price. A reaction is a number moving on the meter that decides both whether you live and how hard the monster is hunting. A generated line would need something to assign it that price, and whatever assigned it would be guessing at the balance of a game running on one number. The failure mode there is a drain rate nobody chose, which is far worse than a clumsy sentence.</p>
+      <p>The jam constraint mattered too. In the time available, 289 authored lines with known costs were a surer bet than a system needing tuning I could not have done.</p>
+      <p><strong>The shape carries over even where the technology does not.</strong> An event bus keeps the world and the responder decoupled, an authoring surface keeps the content as data a non-programmer can change, and a bounded set of effects gives every output a known cost. That is the same structure I put around a judge model in Power Engine, and it is exactly what GenAI-GE was missing.</p>
+      <div class="cta" style="margin-top:26px;">
+        <a class="btn" href="../index.html">Other projects</a>
+        <a class="link" href="../power-engine/index.html">Power Engine</a>
+        <a class="link" href="../games.html">All my games</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  firststef, game designer and gameplay programmer.
+</footer>
+
+<script src="../assets/lightbox.js"></script>
+</body>
+</html>

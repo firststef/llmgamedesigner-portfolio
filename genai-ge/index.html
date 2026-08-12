@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GenAI-GE — an engine that writes its own rules — firststef</title>
+<title>GenAI-GE, an engine that writes its own rules · firststef</title>
 <meta name="description" content="GenAI-GE: a 2024 runtime game engine where only rendering is hard coded and six agents invent the rest in response to what the player types. What it did, where it breaks, and what the limits taught.">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/style.css">
@@ -18,6 +18,7 @@
       <a href="#turn">One turn</a>
       <a href="#limits">Where it breaks</a>
       <a href="#learned">What it taught</a>
+      <a href="../games.html">Games</a>
       <a href="../index.html">All work</a>
     </nav>
   </div>
@@ -168,46 +169,23 @@
   <div class="wrap">
     <div class="section-head"><span class="num">05</span><h2>What the limits taught</h2></div>
     <div class="prose">
-      <p>The first three are the price of the idea, and they need design answers rather than fixes. A relevance pass deciding which rules run this turn instead of broadcasting to all of them. Retirement, so a rule that has stopped mattering can leave. Merged or parallel calls, so the cost of a turn stops tracking the length of the session.</p>
-      <p>The fourth is different and it is the one I would build first. An identity layer: names that resolve to ids, ids the models are required to echo back, and a refusal when they do not. That is what would let the same deck still be the same deck five turns later, and almost everything that went wrong in the recorded session goes back to its absence.</p>
-      <p><strong>The larger lesson is the one that shaped everything I built afterwards.</strong> An unbounded surface produces exactly this: impressive on turn one, incoherent by turn six. Power Engine is the same idea with the surface deliberately narrowed until it holds. There, a model may only change values, descriptions and availability inside a character that already exists, the world's rules are written prose rather than invented per turn, and every change goes into an append-only log that a test can assert on. Same conviction, opposite constraint.</p>
-      <p>Two pieces of writing came out of continuing to pull on this. Neither of them is implemented in the snapshot on this page.</p>
+      <p>The first three limits are the price of the idea, and they need design answers rather than fixes. A relevance pass would decide which rules run this turn instead of broadcasting to all of them. Retirement would let a rule that has stopped mattering leave. Merged or parallel calls would stop the cost of a turn tracking the length of the session.</p>
+      <p>The fourth is the one I would build first. An identity layer gives names that resolve to ids, ids the models are required to echo back, and a refusal when they do not. That is what would let the same deck still be the same deck five turns later, and almost everything that went wrong in the recorded session goes back to its absence.</p>
+      <p><strong>The larger lesson shaped everything I built afterwards.</strong> An unbounded surface produces exactly this: impressive on turn one, incoherent by turn six. Power Engine is the same idea with the surface deliberately narrowed until it holds. There, a model may only change values, descriptions and availability inside a character that already exists, the world's rules are written prose rather than invented per turn, and every change goes into an append-only log that a test can assert on. I kept the conviction and reversed the constraint.</p>
+      <p>Two pieces of writing came out of continuing to pull on this. The snapshot on this page implements neither of them, and it has no test suite behind it either.</p>
     </div>
     <div class="grid cols-2" style="margin-top:26px;">
-      <article class="card">
-        <div class="body">
-          <div class="tag">May 2026</div>
-          <h3>PerpetualGame = game design for maximum immersiveness</h3>
-          <p>Games that never finish. Players spend currency in an in-game Feature Shop to request new features, agents implement them, and a running state document keeps the growing game coherent with itself. The retirement and relevance problems above are what this design is answering.</p>
-          <a class="go" href="https://stefanpetrovici.substack.com/p/perpetualgame-game-design-for-maximum" target="_blank" rel="noopener">Read on Substack</a>
-        </div>
-      </article>
-      <article class="card">
-        <div class="body">
-          <div class="tag">May 2026</div>
-          <h3>AI for on-demand games</h3>
-          <p>How you test a game that did not exist when the test was written. A headless browser drives the build, a vision model reads each screenshot and chooses the next action, and the loop closes without a fixed script. GenAI-GE having no tests at all is a large part of why this became interesting to me.</p>
-          <a class="go" href="https://stefanpetrovici.substack.com/p/ai-for-on-demand-games" target="_blank" rel="noopener">Read on Substack</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
 
-<section id="scope">
-  <div class="wrap">
-    <div class="section-head"><span class="num">06</span><h2>What this snapshot is not</h2></div>
+      <div class="substack-post-embed"><p lang="en">PerpetualGame = game design for maximum immersiveness by Stefan Petrovici</p><p>Can a game change itself based on the player? An experimental new type of game</p><a data-post-link href="https://stefanpetrovici.substack.com/p/perpetualgame-game-design-for-maximum">Read on Substack</a></div>
+
+      <div class="substack-post-embed"><p lang="en">AI for on-demand games by Stefan Petrovici</p><p>Can AI be used for building custom games for us?</p><a data-post-link href="https://stefanpetrovici.substack.com/p/ai-for-on-demand-games">Read on Substack</a></div>
+
+    </div>
+    <script async src="https://substack.com/embedjs/embed.js" charset="utf-8"></script>
     <div class="prose">
-      <ul>
-        <li>It is December 2024 and it has not been touched since. Nothing on this page describes work done later.</li>
-        <li>It has six recorded player turns behind it. That is the entire evidence base, and every number above comes from those six.</li>
-        <li>There is no test suite of any kind.</li>
-        <li>It does not implement the Feature Shop or the state document from the writing above. Those are later ideas, and I would rather say so than let a reader assume the engine grew into them.</li>
-        <li>It was a prototype for an argument, and the argument turned out to be half right, which is the useful half.</li>
-      </ul>
-      <div class="cta" style="margin-top:26px;">
-        <a class="btn" href="../power-engine/index.html">The other project</a>
-        <a class="link" href="../index.html">Back to all work</a>
+      <div class="cta" style="margin-top:34px;">
+        <a class="btn" href="../index.html">Other projects</a>
+        <a class="link" href="../power-engine/index.html">Power Engine</a>
       </div>
     </div>
   </div>
@@ -217,5 +195,6 @@
   firststef, game designer and gameplay programmer.
 </footer>
 
+<script src="../assets/lightbox.js"></script>
 </body>
 </html>

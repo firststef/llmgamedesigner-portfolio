@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>firststef — LLM and AI game design</title>
-<meta name="description" content="AI and LLM game design work by firststef. Power Engine, a fighter where a judge model rewrites a character mid fight, and GenAI-GE, a game engine where only rendering is hard coded.">
+<title>firststef · LLM and AI game design</title>
+<meta name="description" content="AI and LLM game design work by firststef. Power Engine, a fighter where a judge model rewrites a character mid fight; GenAI-GE, an engine where only rendering is hard coded; and Streamer UNTIL, a horror game run by a simulated crowd.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -16,6 +16,8 @@
     <nav class="nav">
       <a href="#power-engine">Power Engine</a>
       <a href="#genai-ge">GenAI-GE</a>
+      <a href="#until">Streamer UNTIL</a>
+      <a href="games.html">Games</a>
       <a href="#approach">How I work</a>
       <a href="#writing">Writing</a>
       <a href="#resume">Résumé</a>
@@ -26,11 +28,12 @@
 
 <header class="hero wrap">
   <span class="kicker">LLM systems &amp; game design</span>
-  <h1>I design games whose rules are <em>written while you play</em>.</h1>
-  <p class="lede">Two projects, four years apart, asking the same question from opposite ends: how much of a game can a language model decide without the game stopping making sense. One puts a model inside a fighting game's rules. The other gives it the whole engine and keeps only the renderer.</p>
+  <h1>I make games that <em>evolve with the player</em>.</h1>
+  <p class="lede">Systems that are not finished when the player arrives. A fighter whose characters are rewritten by what they say out loud, an engine that invents its own rules from a typed sentence, and a horror game whose audience is a simulation you have to learn to read. The recurring question is how much a game can decide at runtime without stopping making sense.</p>
   <div class="cta">
     <a class="btn" href="power-engine/index.html">Power Engine</a>
     <a class="btn sub" href="genai-ge/index.html">GenAI-GE</a>
+    <a class="btn sub" href="games.html">All my games</a>
   </div>
 </header>
 
@@ -86,10 +89,57 @@
   </div>
 </section>
 
-<!-- 03 HOW I WORK -->
+<!-- 03 STREAMER UNTIL -->
+<section id="until">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>Streamer UNTIL</h2></div>
+    <div class="feature">
+      <div class="ft-body">
+        <span class="kicker">Unity · March 2026 · shipped</span>
+        <p class="ft-lead">A simulated audience whose attention is the health bar and the difficulty setting at the same time.</p>
+        <p>Viewership keeps you alive, and at zero the stream ends. Viewership is also what the monster's awareness scales with, so the crowd you built to survive is what gets you found. One number doing both jobs means every line the chat says has a price attached to it.</p>
+        <p>The crowd is a population rather than a list of strings. Viewers carry five traits, so the simulation picks who is plausible for a given kind of line, and the chat develops a temperament the player can read before the meter tells them anything. On a four person team I owned the simulation, the node based tool the team authored it in, and the 289 lines that run through it.</p>
+        <div class="pill-row">
+          <span class="pill"><b>Event bus</b> driven</span>
+          <span class="pill"><b>5</b> viewer traits</span>
+          <span class="pill"><b>15</b> node types</span>
+          <span class="pill"><b>289</b> priced lines</span>
+        </div>
+        <a class="btn" href="until/index.html">Open the case study</a>
+      </div>
+      <div class="ft-media">
+        <img src="assets/img/until/chatgraph-overview.png" alt="The whole chat graph in the node editor, organised into framed zones">
+        <p class="ft-note">The authoring tool I built so the writing was data, not code.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 GAMES -->
+<section id="games">
+  <div class="wrap">
+    <div class="section-head"><span class="num">04</span><h2>Games</h2></div>
+    <div class="split">
+      <div class="media">
+        <img src="assets/img/power-engine/01-combat-loop.png" alt="PowerEngine, two fighters mid match with prediction ghosts">
+        <img src="assets/img/chessworlds-shot1.png" alt="Chess Worlds, the king and the narrator">
+      </div>
+      <div class="body">
+        <h3>I have made seven, and most are playable.</h3>
+        <p>They range across jams, prototypes and the two engines this site is about. Nearly all of them started from a system I wanted to see behave under a real player rather than from a pitch.</p>
+        <div class="cta">
+          <a class="btn" href="games.html">See all my games</a>
+          <a class="link" href="https://firststef.itch.io" target="_blank" rel="noopener">Open my itch.io page</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 HOW I WORK -->
 <section id="approach">
   <div class="wrap">
-    <div class="section-head"><span class="num">03</span><h2>How I work with models in a game</h2></div>
+    <div class="section-head"><span class="num">05</span><h2>How I work with models in a game</h2></div>
     <div class="grid cols-3">
 
       <article class="panel">
@@ -124,46 +174,36 @@
 
       <article class="panel limit">
         <div class="tag">Limits</div>
-        <h3>State the parts that are not built</h3>
-        <p>Breach detection for conditional vows is not implemented. Restrictions about targeting do not map onto the availability mechanism. Both are written down rather than talked around.</p>
+        <h3>Open problems stay visible</h3>
+        <p>Breach detection for conditional vows is still missing, and restrictions about targeting have no handle in the availability mechanism. Both sit in the case study where a reader can find them.</p>
       </article>
 
     </div>
   </div>
 </section>
 
-<!-- 04 WRITING -->
+<!-- 06 WRITING -->
 <section id="writing">
   <div class="wrap">
-    <div class="section-head"><span class="num">04</span><h2>Writing</h2></div>
+    <div class="section-head"><span class="num">06</span><h2>Writing</h2></div>
+    <div class="prose" style="max-width:70ch;margin-bottom:26px;">
+      <p>Two posts on where this work is going. The first is the design argument for games that never finish, written after GenAI-GE and answering what that engine could not do. The second is about testing a game that did not exist when the test was written.</p>
+    </div>
     <div class="grid cols-2">
 
-      <article class="card">
-        <div class="body">
-          <div class="tag">May 2026</div>
-          <h3>PerpetualGame = game design for maximum immersiveness</h3>
-          <p>A design argument for games that never finish. Players buy new features from an in-game Feature Shop, agents implement them, and a state document keeps the growing game coherent with itself. Written after GenAI-GE, and it is the design answer to what that engine could not do.</p>
-          <a class="go" href="https://stefanpetrovici.substack.com/p/perpetualgame-game-design-for-maximum" target="_blank" rel="noopener">Read on Substack</a>
-        </div>
-      </article>
+      <div class="substack-post-embed"><p lang="en">PerpetualGame = game design for maximum immersiveness by Stefan Petrovici</p><p>Can a game change itself based on the player? An experimental new type of game</p><a data-post-link href="https://stefanpetrovici.substack.com/p/perpetualgame-game-design-for-maximum">Read on Substack</a></div>
 
-      <article class="card">
-        <div class="body">
-          <div class="tag">May 2026</div>
-          <h3>AI for on-demand games</h3>
-          <p>How to test a game that did not exist when the test was written. A headless browser plays the build, a vision model reads each screenshot and picks the next action, and the loop closes without a fixed script. The verification half of the same idea.</p>
-          <a class="go" href="https://stefanpetrovici.substack.com/p/ai-for-on-demand-games" target="_blank" rel="noopener">Read on Substack</a>
-        </div>
-      </article>
+      <div class="substack-post-embed"><p lang="en">AI for on-demand games by Stefan Petrovici</p><p>Can AI be used for building custom games for us?</p><a data-post-link href="https://stefanpetrovici.substack.com/p/ai-for-on-demand-games">Read on Substack</a></div>
 
     </div>
+    <script async src="https://substack.com/embedjs/embed.js" charset="utf-8"></script>
   </div>
 </section>
 
-<!-- 05 RÉSUMÉ -->
+<!-- 07 RÉSUMÉ -->
 <section id="resume">
   <div class="wrap">
-    <div class="section-head"><span class="num">05</span><h2>Résumé</h2></div>
+    <div class="section-head"><span class="num">07</span><h2>Résumé</h2></div>
     <div class="split">
       <div class="media resume-media">
         <a class="doc-thumb" href="viewer.html?doc=docs/resume.pdf&amp;title=R%C3%A9sum%C3%A9">
@@ -201,5 +241,6 @@
   firststef, game designer and gameplay programmer.
 </footer>
 
+<script src="assets/lightbox.js"></script>
 </body>
 </html>
