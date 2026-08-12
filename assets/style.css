@@ -71,12 +71,16 @@ code,.mono{font-family:var(--mono);font-size:.9em;color:var(--ink-2);}
 
 /* cards */
 .grid{display:grid;gap:24px;}
+.grid.cols-4{grid-template-columns:repeat(4,1fr);}
 .grid.cols-3{grid-template-columns:repeat(3,1fr);}
 .grid.cols-2{grid-template-columns:repeat(2,1fr);}
 .card{background:var(--bg-2);border-radius:5px;overflow:hidden;display:flex;flex-direction:column;
   transition:transform .18s ease, box-shadow .18s ease;}
 .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
 .card .thumb{aspect-ratio:16/10;overflow:hidden;background:#070a0b;}
+.card.doc .thumb{aspect-ratio:1/1.32;}
+.card.doc h3{font-size:1.16rem;}
+.card.doc p{font-size:.94rem;}
 .card .thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 .card .body{padding:22px 24px 26px;display:flex;flex-direction:column;flex:1;}
 .card .tag{font-family:var(--mono);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;
@@ -196,6 +200,7 @@ body.vpage{overflow:hidden;height:100vh;}
 @media (max-width:840px){
   body{font-size:1.02rem;}
   .nav{display:none;}
+  .grid.cols-4{grid-template-columns:repeat(2,1fr);}
   .grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
   .feature,.split{grid-template-columns:1fr;}
   .feature{padding:24px;}
@@ -203,11 +208,11 @@ body.vpage{overflow:hidden;height:100vh;}
   .facts{grid-template-columns:1fr;}
 }
 
-/* substack embeds: the widget swaps this block for an iframe, so these rules
-   only style the fallback that shows before or instead of the script loading */
-.substack-post-embed{background:var(--bg-2);border-radius:5px;padding:22px 24px;margin:0;}
+/* substack embeds: the widget replaces this block with its own markup, so keep the
+   container unstyled and colour only the text that shows if the script does not run */
+.substack-post-embed{margin:0;align-self:start;}
 .substack-post-embed p{margin:0 0 10px;color:var(--muted);font-size:1rem;}
-.substack-post-embed p:first-child{color:var(--ink);font-size:1.2rem;font-weight:600;
+.substack-post-embed p:first-child{color:var(--ink);font-size:1.16rem;font-weight:600;
   line-height:1.25;letter-spacing:-.015em;}
 .substack-post-embed a{color:var(--accent-2);}
 

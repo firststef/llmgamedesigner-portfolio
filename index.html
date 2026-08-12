@@ -15,8 +15,8 @@
     <span class="brand"><b>first</b>stef</span>
     <nav class="nav">
       <a href="#power-engine">Power Engine</a>
-      <a href="#genai-ge">GenAI-GE</a>
       <a href="#until">Streamer UNTIL</a>
+      <a href="#genai-ge">GenAI-GE</a>
       <a href="games.html">Games</a>
       <a href="#approach">How I work</a>
       <a href="#writing">Writing</a>
@@ -63,36 +63,10 @@
   </div>
 </section>
 
-<!-- 02 GENAI-GE -->
-<section id="genai-ge">
-  <div class="wrap">
-    <div class="section-head"><span class="num">02</span><h2>GenAI-GE</h2></div>
-    <div class="feature">
-      <div class="ft-body">
-        <span class="kicker">JavaScript · December 2024 · snapshot</span>
-        <p class="ft-lead">A runtime engine where the only hard coded system is the one that draws the screen.</p>
-        <p>The player types a sentence. There is no parser and no verb list. Six agents run in a fixed order: one shapes the fiction and looks at the screen, one decides which rules have to exist and writes them out in English, one creates the data those rules assume, one runs every rule that has ever been invented, one compares the picture to the intent and fixes the board, one narrates the result.</p>
-        <p>It is a snapshot from December 2024 and it has six recorded turns behind it, no tests, and four structural limits I can point at in the code. Those limits are the reason this page exists. They are what the idea costs, and they are specific enough to design against.</p>
-        <div class="pill-row">
-          <span class="pill"><b>6</b> agents, one chain</span>
-          <span class="pill"><b>Rules</b> written in English</span>
-          <span class="pill"><b>Vision</b> in the loop</span>
-          <span class="pill"><b>4</b> structural limits</span>
-        </div>
-        <a class="btn" href="genai-ge/index.html">Open the case study</a>
-      </div>
-      <div class="ft-media">
-        <a href="genai-ge/index.html"><img src="assets/img/genai-ge/architecture.svg" alt="Architecture map of the GenAI-GE six agent pipeline"></a>
-        <p class="ft-note">The whole engine on one page. Full size in the case study.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 03 STREAMER UNTIL -->
+<!-- 02 STREAMER UNTIL -->
 <section id="until">
   <div class="wrap">
-    <div class="section-head"><span class="num">03</span><h2>Streamer UNTIL</h2></div>
+    <div class="section-head"><span class="num">02</span><h2>Streamer UNTIL</h2></div>
     <div class="feature">
       <div class="ft-body">
         <span class="kicker">Unity · March 2026 · shipped</span>
@@ -110,6 +84,32 @@
       <div class="ft-media">
         <img src="assets/img/until/chatgraph-overview.png" alt="The whole chat graph in the node editor, organised into framed zones">
         <p class="ft-note">The authoring tool I built so the writing was data, not code.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 GENAI-GE -->
+<section id="genai-ge">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>GenAI-GE</h2></div>
+    <div class="feature">
+      <div class="ft-body">
+        <span class="kicker">JavaScript · December 2024 · snapshot</span>
+        <p class="ft-lead">A runtime engine where the only hard coded system is the one that draws the screen.</p>
+        <p>The player types a sentence. There is no parser and no verb list. Six agents run in a fixed order: one shapes the fiction and looks at the screen, one decides which rules have to exist and writes them out in English, one creates the data those rules assume, one runs every rule that has ever been invented, one compares the picture to the intent and fixes the board, one narrates the result.</p>
+        <p>It is a snapshot from December 2024 and it has six recorded turns behind it, no tests, and four structural limits I can point at in the code. Those limits are the reason this page exists. They are what the idea costs, and they are specific enough to design against.</p>
+        <div class="pill-row">
+          <span class="pill"><b>6</b> agents, one chain</span>
+          <span class="pill"><b>Rules</b> written in English</span>
+          <span class="pill"><b>Vision</b> in the loop</span>
+          <span class="pill"><b>4</b> structural limits</span>
+        </div>
+        <a class="btn" href="genai-ge/index.html">Open the case study</a>
+      </div>
+      <div class="ft-media">
+        <a href="genai-ge/index.html"><img src="assets/img/genai-ge/architecture.svg" alt="Architecture map of the GenAI-GE six agent pipeline"></a>
+        <p class="ft-note">The whole engine on one page. Full size in the case study.</p>
       </div>
     </div>
   </div>
@@ -197,6 +197,61 @@
 
     </div>
     <script async src="https://substack.com/embedjs/embed.js" charset="utf-8"></script>
+
+    <div class="prose" style="max-width:70ch;margin:44px 0 26px;">
+      <p>Documents and fiction, written to be handed to somebody else and built from. A quest sample sized for a production team, two short stories, and the character notes the stories were built on.</p>
+    </div>
+    <div class="grid cols-4">
+
+      <article class="card doc">
+        <a class="thumb" href="viewer.html?doc=docs/dead-air-quest.pdf&amp;title=Dead%20Air">
+          <img src="docs/thumbs/dead-air.png" alt="Dead Air quest design sample, first page">
+        </a>
+        <div class="body">
+          <div class="tag">Quest design</div>
+          <h3>Dead Air</h3>
+          <p>A quest for Streamer UNTIL. The zone cuts the phone signal, so the crowd goes quiet while it keeps draining, and hiding turns into the losing play. Beats, dialogue, flags, triggers and tuning, written against node types that already run.</p>
+          <a class="go" href="viewer.html?doc=docs/dead-air-quest.pdf&amp;title=Dead%20Air">Read the quest</a>
+        </div>
+      </article>
+
+      <article class="card doc">
+        <a class="thumb" href="viewer.html?doc=docs/the-power-brigade.pdf&amp;title=The%20Power%20Brigade">
+          <img src="docs/thumbs/the-power-brigade.png" alt="The Power Brigade, cover">
+        </a>
+        <div class="body">
+          <div class="tag">Fantasy</div>
+          <h3>The Power Brigade</h3>
+          <p>An elite unit is chosen in the arena of the Central City. When the last banner goes to the emperor's son with no trial, a fighter from the mountains objects and calls him to a duel. Magic here runs on four emotions.</p>
+          <a class="go" href="viewer.html?doc=docs/the-power-brigade.pdf&amp;title=The%20Power%20Brigade">Read the story</a>
+        </div>
+      </article>
+
+      <article class="card doc">
+        <a class="thumb" href="viewer.html?doc=docs/the-reveal.pdf&amp;title=The%20Reveal">
+          <img src="docs/thumbs/the-reveal.png" alt="The Reveal, cover">
+        </a>
+        <div class="body">
+          <div class="tag">Science fiction</div>
+          <h3>The Reveal</h3>
+          <p>Lawrence can swap places with versions of himself in parallel worlds, but only for minutes at a time. Here he sets out to learn what his body does while he is away.</p>
+          <a class="go" href="viewer.html?doc=docs/the-reveal.pdf&amp;title=The%20Reveal">Read the story</a>
+        </div>
+      </article>
+
+      <article class="card doc">
+        <a class="thumb" href="viewer.html?doc=docs/character-sheet.pdf&amp;title=Character%20Sheet">
+          <img src="docs/thumbs/character-sheet.png" alt="Character Sheet, cover">
+        </a>
+        <div class="body">
+          <div class="tag">Character notes</div>
+          <h3>Character Sheet</h3>
+          <p>Motivation, wound and need for Lawrence and Agam, the two leads who carry the stories beside this one.</p>
+          <a class="go" href="viewer.html?doc=docs/character-sheet.pdf&amp;title=Character%20Sheet">Read the notes</a>
+        </div>
+      </article>
+
+    </div>
   </div>
 </section>
 
