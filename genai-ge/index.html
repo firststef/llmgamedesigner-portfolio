@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GenAI-GE — an engine that writes its own rules — firststef</title>
+<meta name="description" content="GenAI-GE: a 2024 runtime game engine where only rendering is hard coded and six agents invent the rest in response to what the player types. What it did, where it breaks, and what the limits taught.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>first</b>stef</a>
+    <nav class="nav">
+      <a href="#architecture">Architecture</a>
+      <a href="#turn">One turn</a>
+      <a href="#limits">Where it breaks</a>
+      <a href="#learned">What it taught</a>
+      <a href="../index.html">All work</a>
+    </nav>
+  </div>
+</div>
+
+<header class="case-hero wrap">
+  <span class="kicker">Case study</span>
+  <h1>GenAI-GE</h1>
+  <p class="lede">A game engine with one hard coded system. The renderer draws whatever it is handed, and everything that would normally be gameplay code is invented at runtime by six agents reacting to a sentence the player typed.</p>
+  <p class="team">Solo project, December 2024. This page describes a snapshot exactly as it stands: six recorded turns, no test suite, and four limits that are properties of the design rather than bugs waiting to be fixed.</p>
+</header>
+
+<section id="idea">
+  <div class="wrap">
+    <div class="prose">
+      <p class="lead-q">If systems are just functions that read state and write state, a model can be a system.</p>
+      <p>An entity component system splits a game into data and the functions that transform it. Position, health, whatever the game needs, held as plain components, and systems that sweep over them each frame. It is a clean split, and it has an obvious provocation buried in it: nothing about a system requires it to be code. It only has to read the relevant state and write back a change.</p>
+      <p>So I built one where they are not code. The player types anything at all. No parser, no verb list, no command grammar. If nothing in the game knows what the sentence means, a model invents the rule that would make it mean something, writes that rule down in English, and the rule is then executed, by another model, on that turn and every turn after it.</p>
+      <p><strong>Nothing here has a card game in it.</strong> There is no card database, no deck logic, no notion of a hand. In the recorded session a player typed that they wanted to play Yu-Gi-Oh, and the system built one out of nothing but its own invented rules. That is the thesis working. The rest of this page is what happened next, which is where it gets useful.</p>
+    </div>
+  </div>
+</section>
+
+<section id="architecture">
+  <div class="wrap">
+    <div class="section-head"><span class="num">01</span><h2>The whole engine</h2></div>
+    <div class="prose">
+      <p>Six agents in a fixed chain, one straight line, no branching and no parallelism. The only thing drawn in a solid box is the renderer.</p>
+    </div>
+    <div class="diagram">
+      <img src="../assets/img/genai-ge/architecture.svg" alt="Architecture map: the player input entering a six agent chain, the entity store, the renderer, and the two screenshot points">
+    </div>
+    <p class="diagram-note">Dashed boxes are model calls. Everything solid is the small amount of the engine that is actually code.</p>
+  </div>
+</section>
+
+<section id="turn">
+  <div class="wrap">
+    <div class="section-head"><span class="num">02</span><h2>What one turn does</h2></div>
+    <div class="prose">
+      <p>The player's sentence goes in at the top and each stage waits for the one before it.</p>
+    </div>
+    <div class="steps" style="max-width:66ch;margin-top:24px;">
+      <div class="step llm">
+        <div class="n">1</div>
+        <div>
+          <h4>The Game Master shapes the fiction</h4>
+          <p>Before answering it makes the browser screenshot its own canvas and looks at the picture alongside the state. It decides where the game should go next and creates whatever the fiction now needs to exist. This is the agent that invented five specific card names out of nothing.</p>
+          <div class="who">Larger model, high temperature</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">2</div>
+        <div>
+          <h4>The Supervisor decides which rules must exist</h4>
+          <p>It reads the input and the list of rules already invented, and writes any missing ones as short English paragraphs: what the rule is for, how it behaves, and what data it assumes. That paragraph is the entire implementation. It goes into a registry and is read back as instructions from then on.</p>
+          <div class="who">Larger model</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">3</div>
+        <div>
+          <h4>Transition creates the data the new rules assume</h4>
+          <p>A rule about drawing cards is meaningless if nothing has a deck. This stage adds the missing components before anything tries to use them.</p>
+          <div class="who">Small model</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">4</div>
+        <div>
+          <h4>The Resolver runs every rule that has ever been invented</h4>
+          <p>One model call per rule, in sequence, each one told that it is that rule and handed its own paragraph as its instructions. This is the stage that grows, and it is the centre of the cost problem further down this page.</p>
+          <div class="who">Small model, once per rule</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">5</div>
+        <div>
+          <h4>The Canvas Adjuster compares the picture to the intention</h4>
+          <p>It applies everything pending, pushes the new state to the browser, waits for a redraw, takes a second screenshot, and looks at both frames. If the board does not show what the fiction said happened, it patches the board. This is the most interesting agent in the chain and also where the recorded turn breaks.</p>
+          <div class="who">Small model, two images</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">6</div>
+        <div>
+          <h4>The Narrator says what happened</h4>
+          <p>It reads the results and the state and writes a short description for the player. Notably it does not read the Game Master's directive, so it reports the state it finds rather than the story that was intended.</p>
+          <div class="who">Small model</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="onestep">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>The turn that contains the whole thing</h2></div>
+    <div class="prose">
+      <p>Turn two of six. The previous turn had cleared the world and invented a single rule about card games. Now the player types that they want to see their deck and draw the top five cards.</p>
+      <p>The Game Master answers with five card names and puts them in front of the player. There is no card database anywhere in the project. Those five names exist because a model wrote them into a component value and the engine stored them without knowing what they were. The Supervisor decides that a deck rule and a rendering rule now have to exist and writes both as English paragraphs. Transition puts an empty deck and an empty hand on an entity. The Resolver runs three times, once per rule, and all three return the same two writes. The Canvas Adjuster looks at the board, sees no cards on it, and draws five itself, one per invented name.</p>
+      <p>Then the Narrator tells the player their deck is empty.</p>
+      <p><strong>Both statements are the system's own output, seventeen seconds apart, inside one turn.</strong> The five agents each held a slightly different idea of which entity the player's hand was, and the last one to write won. That single turn is the thesis and the flaw at the same time: a game invented a deck, invented the rules governing decks, executed those rules, looked at the resulting picture, judged it wrong and fixed it, all without a line of card game code existing anywhere. And then it lost track of what it had just made.</p>
+    </div>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <div class="section-head"><span class="num">04</span><h2>Where the architecture breaks down</h2></div>
+    <div class="prose">
+      <p>Four limits, all visible in the code and in the recorded session rather than inferred. None of them are bugs I did not get around to. Each one is the direct cost of having no hard coded rules, and the numbers below come from the six turns that were recorded.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>1, 3, 4, 4, 7, 10</b><span>model calls the resolver made on each of the six turns, set by the player's history rather than by the current input</span></div>
+      <div class="fact"><b>7 s</b><span>of every turn spent in fixed waits for the browser to redraw and upload, before any model is asked anything</span></div>
+      <div class="fact"><b>8 → 125</b><span>rows in the entity store from the first turn to the last, including duplicates of entities that were already there</span></div>
+    </div>
+    <div class="grid cols-2" style="margin-top:26px;">
+      <article class="panel limit">
+        <div class="tag">Limit 01</div>
+        <h3>Nothing overlaps</h3>
+        <p>The chain is a straight line with a hand written router and no parallel edges. Every stage waits for the one before it. The two largest, slowest model calls sit at the front, where nothing can proceed without them, and seven seconds of every turn are fixed sleeps waiting on the browser. The recorded turns land between one and four minutes apart. Some of that is the player typing. The trend is the pipeline.</p>
+      </article>
+      <article class="panel limit">
+        <div class="tag">Limit 02</div>
+        <h3>Cost grows with everything ever asked for</h3>
+        <p>The resolver loops over every rule that exists, one call each, every turn. Rules are never checked for relevance. A mana rule invented for a fireball three turns ago is still asked what it would like to do while the player is shuffling a deck. The curve is set by the player's history, and the input is the only thing that could tell you which rules actually matter.</p>
+      </article>
+      <article class="panel limit">
+        <div class="tag">Limit 03</div>
+        <h3>Rules accumulate and are never retired</h3>
+        <p>Nothing in the design can shrink the list. No agent is ever asked whether a rule is still needed, and the actions available to them operate on entities and components, not on rules. There is a note in the code where the cleanup stage should be, and no cleanup stage. By the final turn the registry held ten entries for seven distinct rules, so three of those ten calls paid full price to re-run a duplicate.</p>
+      </article>
+      <article class="panel limit">
+        <div class="tag">Limit 04</div>
+        <h3>Identity is a suggestion, not an address</h3>
+        <p>This is the one that decides whether the fiction holds together. Two hard coded roles are the safety net for a model that has lost track of an id, which works for the two entities the game starts with and for nothing it ever invents. Worse, agents routinely send the name they chose where the engine reads an id, so the name is discarded at the door and the thing they just created cannot be addressed by the only handle they know.</p>
+      </article>
+    </div>
+    <div class="prose" style="margin-top:30px;">
+      <p>There is a fifth problem that is not architectural but shapes how much of the above you see when it runs. Component payloads are not validated, so the engine accepts a shape the renderer cannot read. Most of the entities created during the recorded session were written into the world and never drawn. And a directive written by the first agent reaches one of its three readers, because two of them read a field name that is never assigned anywhere: those two agents, the ones deciding what rules exist and what they do, were working from the player's text alone. A good part of the incoherence in the recording has that at the root.</p>
+    </div>
+  </div>
+</section>
+
+<section id="learned">
+  <div class="wrap">
+    <div class="section-head"><span class="num">05</span><h2>What the limits taught</h2></div>
+    <div class="prose">
+      <p>The first three are the price of the idea, and they need design answers rather than fixes. A relevance pass deciding which rules run this turn instead of broadcasting to all of them. Retirement, so a rule that has stopped mattering can leave. Merged or parallel calls, so the cost of a turn stops tracking the length of the session.</p>
+      <p>The fourth is different and it is the one I would build first. An identity layer: names that resolve to ids, ids the models are required to echo back, and a refusal when they do not. That is what would let the same deck still be the same deck five turns later, and almost everything that went wrong in the recorded session goes back to its absence.</p>
+      <p><strong>The larger lesson is the one that shaped everything I built afterwards.</strong> An unbounded surface produces exactly this: impressive on turn one, incoherent by turn six. Power Engine is the same idea with the surface deliberately narrowed until it holds. There, a model may only change values, descriptions and availability inside a character that already exists, the world's rules are written prose rather than invented per turn, and every change goes into an append-only log that a test can assert on. Same conviction, opposite constraint.</p>
+      <p>Two pieces of writing came out of continuing to pull on this. Neither of them is implemented in the snapshot on this page.</p>
+    </div>
+    <div class="grid cols-2" style="margin-top:26px;">
+      <article class="card">
+        <div class="body">
+          <div class="tag">May 2026</div>
+          <h3>PerpetualGame = game design for maximum immersiveness</h3>
+          <p>Games that never finish. Players spend currency in an in-game Feature Shop to request new features, agents implement them, and a running state document keeps the growing game coherent with itself. The retirement and relevance problems above are what this design is answering.</p>
+          <a class="go" href="https://stefanpetrovici.substack.com/p/perpetualgame-game-design-for-maximum" target="_blank" rel="noopener">Read on Substack</a>
+        </div>
+      </article>
+      <article class="card">
+        <div class="body">
+          <div class="tag">May 2026</div>
+          <h3>AI for on-demand games</h3>
+          <p>How you test a game that did not exist when the test was written. A headless browser drives the build, a vision model reads each screenshot and chooses the next action, and the loop closes without a fixed script. GenAI-GE having no tests at all is a large part of why this became interesting to me.</p>
+          <a class="go" href="https://stefanpetrovici.substack.com/p/ai-for-on-demand-games" target="_blank" rel="noopener">Read on Substack</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="scope">
+  <div class="wrap">
+    <div class="section-head"><span class="num">06</span><h2>What this snapshot is not</h2></div>
+    <div class="prose">
+      <ul>
+        <li>It is December 2024 and it has not been touched since. Nothing on this page describes work done later.</li>
+        <li>It has six recorded player turns behind it. That is the entire evidence base, and every number above comes from those six.</li>
+        <li>There is no test suite of any kind.</li>
+        <li>It does not implement the Feature Shop or the state document from the writing above. Those are later ideas, and I would rather say so than let a reader assume the engine grew into them.</li>
+        <li>It was a prototype for an argument, and the argument turned out to be half right, which is the useful half.</li>
+      </ul>
+      <div class="cta" style="margin-top:26px;">
+        <a class="btn" href="../power-engine/index.html">The other project</a>
+        <a class="link" href="../index.html">Back to all work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  firststef, game designer and gameplay programmer.
+</footer>
+
+</body>
+</html>

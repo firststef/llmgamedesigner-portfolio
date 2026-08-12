@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Engine — a judge model inside a fighting game — firststef</title>
+<meta name="description" content="Power Engine: a 3D turn-based fighter in Godot where each character is a program and a judge model rewrites it mid fight in response to what the fighter says out loud.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><b>first</b>stef</a>
+    <nav class="nav">
+      <a href="#turn">The talking turn</a>
+      <a href="#pipeline">The pipeline</a>
+      <a href="#surface">What a patch changes</a>
+      <a href="#rules">Rules as data</a>
+      <a href="#proof">How I check it</a>
+      <a href="../index.html">All work</a>
+    </nav>
+  </div>
+</div>
+
+<header class="case-hero wrap">
+  <span class="kicker">Case study</span>
+  <h1>Power Engine</h1>
+  <p class="lede">A 3D turn-based fighter where each character is a program rather than a set of numbers, and where spending a turn to speak is the move that edits it. A judge model reads what was said against the world's written rules and answers with a change to the speaker's own code.</p>
+  <p class="team">Solo project, in development in Godot 4.6. I designed the system, wrote the world rules and the prompts, built the engine side and the model server, and wrote the test batteries.</p>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="prose">
+      <p class="lead-q">The anime moment where someone explains their power and gets stronger for it is a rules moment, not a cutscene.</p>
+      <p>Fighting games are exact. Every frame, every value, every interaction is decided before the match starts, and that exactness is the whole pleasure. Combat anime works the opposite way. A character makes a promise, gives something up, names their technique out loud, and the world answers by changing what they can do. Nothing about that is decided in advance, which is exactly why it lands.</p>
+      <p>Every game that has tried to hold both ends up scripting the second one. The vow is a cutscene, the power-up is a flag, and the fifth time you see it you know it was waiting there all along. I wanted the opposite: a fighter where the rules are exact and the conversation is not, and where the thing that changes the fight is a sentence nobody wrote in advance.</p>
+      <p><strong>So a character is a program, and speech is how the program gets edited.</strong> Stats, abilities, costs, requirements and the prose that describes each move all live in one Lua file per fighter. The combat layer reads that file live. If something changes it mid match, the next punch is genuinely a different punch.</p>
+    </div>
+    <div class="shots" style="margin-top:34px;">
+      <figure>
+        <img src="../assets/img/power-engine/01-combat-loop.png" alt="Two fighters mid match with action bars open and translucent preview ghosts">
+        <figcaption>The layer underneath is an ordinary exact fighter. Both players pick simultaneously, the yellow arrows show where each will strike, and the blue and red ghosts play out how the locked-in punch and kick resolve before either player commits.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="turn">
+  <div class="wrap">
+    <div class="section-head"><span class="num">01</span><h2>The turn where you talk</h2></div>
+    <div class="prose">
+      <p>Speaking is an action on the action bar, next to punch and kick, and it costs the same kind of thing they cost. Twelve words per turn, and the fighter is committed to a six tick speaking animation while he says them. He can be hit during it. He cannot take it back.</p>
+      <p>That cap is a design decision, not a technical one. A long explanation has to be paid for across several turns, in the open, while somebody is trying to hit you. It also gives the system its natural rhythm: a thought accumulates over consecutive speaking turns and only gets evaluated once it is finished.</p>
+      <p>There are two kinds. <strong>Say</strong> is out loud and the opponent hears it. <strong>Monologue</strong> is internal and nobody does. The distinction is not cosmetic. In a world whose rules say a technique reveal has to be heard to count, a monologue cannot buy one, and the model is told which kind each line was.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/02-speech-input.png" alt="The speech input box open during a match, with the word limit visible">
+        <figcaption>Instead of attacking, the player spends the turn talking. Submitting locks the fighter into the speaking animation for six ticks.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="wrap">
+    <div class="section-head"><span class="num">02</span><h2>Two models, and only one of them is expensive</h2></div>
+    <div class="prose">
+      <p>Most of what a fighter says is not worth a decision. Taunts, half sentences, setup for a thought that is not finished yet. Sending all of it to a large model would be slow and expensive, and worse, it would produce an effect every time somebody spoke, which would make the whole mechanic cheap.</p>
+      <p>So the pipeline has a cheap first stage whose only job is to say no.</p>
+    </div>
+    <div class="steps" style="max-width:66ch;margin-top:24px;">
+      <div class="step">
+        <div class="n">1</div>
+        <div>
+          <h4>The line joins a buffer</h4>
+          <p>Consecutive speaking turns accumulate into one unfinished thought. The buffer closes if the fighter does something else, goes quiet for long enough, or is knocked out.</p>
+          <div class="who">Engine</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">2</div>
+        <div>
+          <h4>The gate answers yes or no</h4>
+          <p>A small fast model gets the buffer and returns one boolean with a reason: is this thought complete and worth thinking hard about. It is not a classifier. It does not name a rule or pick a category. Measured at roughly six tenths of a second.</p>
+          <div class="who">Small model</div>
+        </div>
+      </div>
+      <div class="step llm">
+        <div class="n">3</div>
+        <div>
+          <h4>The judge decides what it costs and what it grants</h4>
+          <p>Only on a yes. It reads the speaker's whole program, the opponent's program and live state, the scenario's written world rules, the buffer, and the last twenty things that happened in the fight. It can still answer that nothing happened, and that answer is logged. Measured at roughly four seconds.</p>
+          <div class="who">Larger model</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <div>
+          <h4>The change is appended, never applied in place</h4>
+          <p>The engine writes an event holding the patch, a player-facing line of prose, and a free-form tag the model chose. The character is then rebuilt from its base program plus its history. Nothing edits a character directly during a fight.</p>
+          <div class="who">Engine</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">5</div>
+        <div>
+          <h4>The fight is different now</h4>
+          <p>Gauges resync, the action bar re-reads what is available, and the prose line is shown on screen. The player sees the world acknowledge what they said.</p>
+          <div class="who">Engine</div>
+        </div>
+      </div>
+    </div>
+    <div class="prose" style="margin-top:30px;">
+      <p>The four second wait is real and it is not hidden. From the moment the gate escalates, the speaker carries a pending indicator, and the game keeps running underneath. Felt right, the delay is the mechanic: the universe takes a moment to decide whether it agrees with you.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/03-judge-response.png" alt="The two accumulated lines of speech and the judge's structured reply">
+        <figcaption>The two lines that were sent, and what came back: whether there was an effect, the line of prose the player will read, the patch, and a tag. Taken from the server log of a live match.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="surface">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>What a patch is allowed to change</h2></div>
+    <div class="prose">
+      <p>This is the boundary that makes the whole thing workable, so it is worth being exact about it. The judge changes <strong>values, descriptions and availability</strong>. It sets a damage number, rewrites the sentence describing a move, raises a cost, seals an ability with a reason, or adds a requirement. It does not write new behaviour. Authoring genuinely new executable moves is a separate problem and I have not solved it.</p>
+      <p>Two things follow from drawing the line there. The output is small enough to check before it is applied, and it is bounded enough that a bad answer is a balance problem rather than a broken game. It also keeps the honest version of the claim available: this is a model editing a character sheet that the simulation happens to read every frame, not a model writing gameplay code.</p>
+      <p>The other half is that <strong>the prose moves with the number</strong>. When a move gets stronger, the sentence describing the move is rewritten in the same patch. A character whose damage says one thing and whose description says another stops being a character, so the two are never allowed to drift.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/04-dna-before-after.png" alt="A character's program before and after one patch is applied">
+        <figcaption>One patch, before and after. The punch goes from 10 to 45, its written description is rewritten to match, a debt is added that has not come due yet, and the value the combat layer actually reads moves with it.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/img/power-engine/05-ability-sealed.png" alt="A character's ability menu with two branches greyed out after a vow">
+        <figcaption><b>Availability is the sharpest tool the judge has.</b> Gon swore to use nothing but Rock. One turn later the branch menu has Rock lit and the other two greyed out and refusing input, with the reason string the engine returns for each. The vow is not tracked in a registry anywhere. It is a value on an ability, and the action bar reads it like any other.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="deferred">
+  <div class="wrap">
+    <div class="section-head"><span class="num">04</span><h2>A price that comes due later</h2></div>
+    <div class="prose">
+      <p>The first playtest exposed the flaw I care most about. A fighter made an all-or-nothing vow and the judge read it as a trade that settles immediately: give this up, get that now. Every vow became a swap, and a swap has no drama in it. What the design was missing was time. Enormous now, and the bill arrives later.</p>
+      <p>The fix is deliberately dumb on the engine side. A patch may plant an entry that is waiting on one of four mechanical events: an ability being used, a hit landing, a hit being taken, or the fight reaching a given tick. The entry fires once, then removes itself, and it goes through exactly the same path as any other change, so the event log fully accounts for it.</p>
+      <p><strong>The engine has no concept of a vow, a price or a debt.</strong> It watches four events. Everything that makes those four events feel like a bargain with the universe lives in the scenario's written rules and in the judge's prompt. That is the pattern I keep returning to: a small neutral primitive in the engine, and all of the meaning in the text.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/06-deferred-effect.png" alt="A vow planting a delayed effect, and that effect firing several turns later">
+        <figcaption>Left: the vow lands and plants something keyed to a punch that has not been thrown yet. Right: several turns later Todo throws it, and the debt collects itself. Energy to zero, damage back to what it was, announced by the banner at the bottom of the screen.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="wrap">
+    <div class="section-head"><span class="num">05</span><h2>The rules of the world are data</h2></div>
+    <div class="prose">
+      <p>A scenario is a folder. It holds a short manifest and a document written in plain language describing how its universe works: what a vow is worth here, whether naming your technique out loud does anything, where the energy comes from, how big an effect a moment of that weight should have. That document goes into both prompts, unedited.</p>
+      <p>There is no rule registry and no enum of narrative effects anywhere in the engine. Adding a new kind of moment means writing a paragraph. That was a firm constraint on myself from the start, because the moment there is a list of allowed narrative effects, the system can only ever produce what is on the list.</p>
+      <p>The clearest evidence it works is a crossover scenario where two universes have to coexist under one judge, with different rules about the same act.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/07-crossover-two-rulebooks.png" alt="Two judgements from the same match, one refusing a reveal and one rewarding it">
+        <figcaption>Same match, same kind of act, opposite answers. Gon explains his technique and is refused, with the judge stating that declaring an ability does not grant a power-up. Todo explains his and is rewarded. Neither outcome is coded. The scenario document says the two universes disagree about this, and the judge read it.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="proof">
+  <div class="wrap">
+    <div class="section-head"><span class="num">06</span><h2>How I know it works</h2></div>
+    <div class="prose">
+      <p>A system with a model in the middle of it is easy to demo and hard to trust. The event log is what makes it testable: because every change is written down in order, a test can assert on the story the match produced rather than on the model's wording.</p>
+      <p>There are two batteries and they check different things.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>25</b><span>live checks that boot the server and a fresh headless match per case, then assert on the resulting event log</span></div>
+      <div class="fact"><b>83</b><span>checks with no model involved, confirming a patched value is actually the value combat reads</span></div>
+      <div class="fact"><b>4</b><span>mechanical triggers a delayed effect can wait on, and the only ones the engine watches</span></div>
+    </div>
+    <div class="prose" style="margin-top:30px;">
+      <p>The live battery includes the cases that would be easiest to fake: that a technique reveal is refused for one character and accepted for the other in the same scenario, and that a delayed price is really encoded as a pending effect rather than applied on the spot. The model-free battery exists because the failure I was most afraid of is silent. A patch can apply cleanly, appear in the log, read correctly in a dump, and still never reach the code that resolves a punch.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/08-tests.png" alt="Output from the two test batteries">
+        <figcaption>The two batteries running. The left one spends real model calls. The right one spends none, and is the one I run constantly.</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/img/power-engine/10-event-log.png" alt="The in-game developer overlay showing a character's full event log">
+        <figcaption><b>The log is the character.</b> Loading a fighter means loading the base program and replaying every event on top of it. Each entry carries its tick, the tag the model chose for it, the line the player read, and the exact change that was applied. It is the save file, the audit trail and the story of the match, and it is append-only.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="storyboard">
+  <div class="wrap">
+    <div class="section-head"><span class="num">07</span><h2>One exchange, end to end</h2></div>
+    <div class="prose">
+      <p>A normal turn, the player spending the next one talking, the answer coming back, the change landing in the log, and the deferred half collecting itself when he finally throws the punch he mortgaged.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="../assets/img/power-engine/09-storyboard.png" alt="Five frames showing one exchange from a normal turn through to the delayed consequence">
+        <figcaption>Five frames from one recorded match.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <div class="section-head"><span class="num">08</span><h2>What is not built</h2></div>
+    <div class="grid cols-2">
+      <article class="panel limit">
+        <div class="tag">Not implemented</div>
+        <h3>Breach detection</h3>
+        <p>A vow can restrict you, and a later judgement can lift the restriction. Nothing watches for the restriction being violated. A conditional vow along the lines of "until I land a hit" cannot punish itself, and a watcher for that is future work rather than a thing I am about to claim.</p>
+      </article>
+      <article class="panel limit">
+        <div class="tag">Known limit</div>
+        <h3>Restrictions about targeting</h3>
+        <p>Sealing an ability works because availability is a value the action bar reads. A restriction like "only swap with allies" has no such handle: the target filter does not read the character program yet, so that shape of vow cannot be enforced mechanically today.</p>
+      </article>
+      <article class="panel limit">
+        <div class="tag">Next frontier</div>
+        <h3>New behaviour</h3>
+        <p>The judge tunes and seals what already exists. It does not invent a move that did nothing before. That is the interesting unsolved problem here, and pretending it is already done would be the easiest way to waste a studio's time.</p>
+      </article>
+      <article class="panel limit">
+        <div class="tag">Presentation</div>
+        <h3>What the screenshots do not show</h3>
+        <p>The reason a sealed button gives is supplied by the engine and attached as a tooltip, but the UI does not draw tooltips on disabled buttons, so it is shown in a data panel instead. The speech bubble renders oversized at close camera distances. Fighters are the project's primitive rigs; per-character art is not done.</p>
+      </article>
+    </div>
+    <div class="prose" style="margin-top:34px;">
+      <p>Everything on this page comes from recorded matches: the client talking to the model server, with nothing reconstructed and nothing mocked up. Balance is the honest open question. Magnitudes now scale with how much narrative weight the scenario text gives a moment, and one severe covenant in testing bought a seventy percent damage increase. Whether that is thrilling or broken is a question for playtests, not for me.</p>
+      <div class="cta" style="margin-top:26px;">
+        <a class="btn" href="../genai-ge/index.html">The other project</a>
+        <a class="link" href="../index.html">Back to all work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  firststef, game designer and gameplay programmer.
+</footer>
+
+</body>
+</html>

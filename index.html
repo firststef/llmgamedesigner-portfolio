@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>firststef — LLM and AI game design</title>
+<meta name="description" content="AI and LLM game design work by firststef. Power Engine, a fighter where a judge model rewrites a character mid fight, and GenAI-GE, a game engine where only rendering is hard coded.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <span class="brand"><b>first</b>stef</span>
+    <nav class="nav">
+      <a href="#power-engine">Power Engine</a>
+      <a href="#genai-ge">GenAI-GE</a>
+      <a href="#approach">How I work</a>
+      <a href="#writing">Writing</a>
+      <a href="#resume">Résumé</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero wrap">
+  <span class="kicker">LLM systems &amp; game design</span>
+  <h1>I design games whose rules are <em>written while you play</em>.</h1>
+  <p class="lede">Two projects, four years apart, asking the same question from opposite ends: how much of a game can a language model decide without the game stopping making sense. One puts a model inside a fighting game's rules. The other gives it the whole engine and keeps only the renderer.</p>
+  <div class="cta">
+    <a class="btn" href="power-engine/index.html">Power Engine</a>
+    <a class="btn sub" href="genai-ge/index.html">GenAI-GE</a>
+  </div>
+</header>
+
+<!-- 01 POWER ENGINE -->
+<section id="power-engine">
+  <div class="wrap">
+    <div class="section-head"><span class="num">01</span><h2>Power Engine</h2></div>
+    <div class="feature">
+      <div class="ft-body">
+        <span class="kicker">Godot 4.6 · in development</span>
+        <p class="ft-lead">A 3D turn-based fighter where each character is a program, and speaking in character is how you edit it.</p>
+        <p>A fighter can spend a turn talking instead of attacking. Twelve words, and the speaker is committed for six ticks, so a line can be interrupted by a fist. Two models read what was said: a small one decides whether the thought is finished and worth judging, a larger one decides what it costs and what it grants.</p>
+        <p>What comes back is a patch to the speaker's own character program. Combat reads that program live, so the fight after the patch is not the fight before it. The rules of the universe are prose shipped with the scenario, never engine code, which is why the same sentence can be refused in one world and rewarded in another.</p>
+        <div class="pill-row">
+          <span class="pill"><b>Gate</b> and <b>Judge</b> pipeline</span>
+          <span class="pill"><b>Lua</b> character programs</span>
+          <span class="pill"><b>Append-only</b> event log</span>
+          <span class="pill"><b>108</b> automated checks</span>
+        </div>
+        <a class="btn" href="power-engine/index.html">Open the case study</a>
+      </div>
+      <div class="ft-media">
+        <img src="assets/img/power-engine/02-speech-input.png" alt="A fighter spends the turn speaking instead of attacking">
+        <p class="ft-note">Twelve words, and the fighter is locked into the animation while he says them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 GENAI-GE -->
+<section id="genai-ge">
+  <div class="wrap">
+    <div class="section-head"><span class="num">02</span><h2>GenAI-GE</h2></div>
+    <div class="feature">
+      <div class="ft-body">
+        <span class="kicker">JavaScript · December 2024 · snapshot</span>
+        <p class="ft-lead">A runtime engine where the only hard coded system is the one that draws the screen.</p>
+        <p>The player types a sentence. There is no parser and no verb list. Six agents run in a fixed order: one shapes the fiction and looks at the screen, one decides which rules have to exist and writes them out in English, one creates the data those rules assume, one runs every rule that has ever been invented, one compares the picture to the intent and fixes the board, one narrates the result.</p>
+        <p>It is a snapshot from December 2024 and it has six recorded turns behind it, no tests, and four structural limits I can point at in the code. Those limits are the reason this page exists. They are what the idea costs, and they are specific enough to design against.</p>
+        <div class="pill-row">
+          <span class="pill"><b>6</b> agents, one chain</span>
+          <span class="pill"><b>Rules</b> written in English</span>
+          <span class="pill"><b>Vision</b> in the loop</span>
+          <span class="pill"><b>4</b> structural limits</span>
+        </div>
+        <a class="btn" href="genai-ge/index.html">Open the case study</a>
+      </div>
+      <div class="ft-media">
+        <a href="genai-ge/index.html"><img src="assets/img/genai-ge/architecture.svg" alt="Architecture map of the GenAI-GE six agent pipeline"></a>
+        <p class="ft-note">The whole engine on one page. Full size in the case study.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 HOW I WORK -->
+<section id="approach">
+  <div class="wrap">
+    <div class="section-head"><span class="num">03</span><h2>How I work with models in a game</h2></div>
+    <div class="grid cols-3">
+
+      <article class="panel">
+        <div class="tag">Rules as data</div>
+        <h3>The world's rules are prose, not code</h3>
+        <p>A scenario ships a plain-language description of how its universe works, and the model reasons over it. New behaviour is added by editing that text. Nothing in the engine knows what a vow is.</p>
+      </article>
+
+      <article class="panel">
+        <div class="tag">Bounded surface</div>
+        <h3>A model edits values, not behaviour</h3>
+        <p>The judge changes numbers, descriptions and what is available. It does not author new executable behaviour. That boundary is what makes the output safe to apply live and cheap to verify.</p>
+      </article>
+
+      <article class="panel">
+        <div class="tag">Evidence</div>
+        <h3>Every change is logged and replayable</h3>
+        <p>Loading a character means loading the base program and replaying its history. The log is the story and the audit trail at once, which is also what makes the automated tests possible.</p>
+      </article>
+
+      <article class="panel">
+        <div class="tag">Latency is design</div>
+        <h3>Cheap model first, expensive model rarely</h3>
+        <p>A small model gates the expensive one so most turns never pay for judgement. The wait that remains is shown to the player as the world taking a moment to acknowledge what was said.</p>
+      </article>
+
+      <article class="panel">
+        <div class="tag">Failure</div>
+        <h3>Degrade to a playable game</h3>
+        <p>Server down, timeout, malformed reply: the fight continues without the narrative layer, and the AI opponent simply stays quiet. A model is a feature, not a dependency.</p>
+      </article>
+
+      <article class="panel limit">
+        <div class="tag">Limits</div>
+        <h3>State the parts that are not built</h3>
+        <p>Breach detection for conditional vows is not implemented. Restrictions about targeting do not map onto the availability mechanism. Both are written down rather than talked around.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- 04 WRITING -->
+<section id="writing">
+  <div class="wrap">
+    <div class="section-head"><span class="num">04</span><h2>Writing</h2></div>
+    <div class="grid cols-2">
+
+      <article class="card">
+        <div class="body">
+          <div class="tag">May 2026</div>
+          <h3>PerpetualGame = game design for maximum immersiveness</h3>
+          <p>A design argument for games that never finish. Players buy new features from an in-game Feature Shop, agents implement them, and a state document keeps the growing game coherent with itself. Written after GenAI-GE, and it is the design answer to what that engine could not do.</p>
+          <a class="go" href="https://stefanpetrovici.substack.com/p/perpetualgame-game-design-for-maximum" target="_blank" rel="noopener">Read on Substack</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="body">
+          <div class="tag">May 2026</div>
+          <h3>AI for on-demand games</h3>
+          <p>How to test a game that did not exist when the test was written. A headless browser plays the build, a vision model reads each screenshot and picks the next action, and the loop closes without a fixed script. The verification half of the same idea.</p>
+          <a class="go" href="https://stefanpetrovici.substack.com/p/ai-for-on-demand-games" target="_blank" rel="noopener">Read on Substack</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- 05 RÉSUMÉ -->
+<section id="resume">
+  <div class="wrap">
+    <div class="section-head"><span class="num">05</span><h2>Résumé</h2></div>
+    <div class="split">
+      <div class="media resume-media">
+        <a class="doc-thumb" href="viewer.html?doc=docs/resume.pdf&amp;title=R%C3%A9sum%C3%A9">
+          <img src="docs/thumbs/resume.png" alt="Résumé, first page">
+        </a>
+      </div>
+      <div class="body">
+        <h3>Game designer and gameplay programmer.</h3>
+        <p>Seven years of engineering, shipped titles at Ubisoft, and the AI-driven gameplay work on this site.</p>
+        <div class="cta">
+          <a class="btn" href="viewer.html?doc=docs/resume.pdf&amp;title=R%C3%A9sum%C3%A9">View résumé</a>
+          <a class="link" href="docs/resume.pdf" download>Download PDF</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <div class="wrap">
+    <span class="kicker">Let's build</span>
+    <h2>A model in a game is a design problem long before it is an engineering one.</h2>
+    <p>If you are putting one inside a system that has to stay playable, I would like to hear about it.</p>
+    <div class="cta">
+      <a href="https://stefanpetrovici.substack.com" target="_blank" rel="noopener">Substack</a>
+      <a href="https://firststef.itch.io" target="_blank" rel="noopener">itch.io</a>
+      <a href="https://github.com/firststef" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:stefanpetrovici2006@gmail.com">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  firststef, game designer and gameplay programmer.
+</footer>
+
+</body>
+</html>
